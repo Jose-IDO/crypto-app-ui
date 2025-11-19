@@ -2,6 +2,33 @@
 
 A React Native (Expo) cryptocurrency exchange application with a modern dark-themed UI. This app allows users to exchange cryptocurrencies (ETH, BTC, ADA) for fiat currencies (USD, EUR, GBP) with real-time conversion, balance validation, and transaction fee calculations.
 
+## Repository
+
+**GitHub:** [https://github.com/Jose-IDO/crypto-app-ui](https://github.com/Jose-IDO/crypto-app-ui)
+
+## Download & Install
+
+### Android APK Download
+
+You can download the production build of the app directly from Google Drive:
+
+**[Download Crypto Trading App APK](https://drive.google.com/drive/folders/1d0SopP9UGvL7fnGDsioLznPDYqTGXbPl?usp=sharing)**
+
+### Installation Instructions
+
+1. **Click the link above** to open the Google Drive folder
+2. **Download the APK file** (application-*.apk) to your Android device
+3. **Enable installation from unknown sources** on your phone:
+   - Go to Settings → Security (or Settings → Apps → Special access)
+   - Enable "Install unknown apps" or "Allow from this source"
+   - If prompted, allow your browser or file manager to install apps
+4. **Open the downloaded APK file** from your Downloads folder
+5. **Tap "Install"** when prompted
+6. **Allow permissions** when the app requests them (if any)
+7. **Open the app** from your app drawer
+
+**Note:** The app may require certain permissions to function properly. Please allow all requested permissions when prompted.
+
 ## Features Checklist
 
 ### Core Functionality
@@ -53,7 +80,8 @@ A React Native (Expo) cryptocurrency exchange application with a modern dark-the
 
 1. **Clone or download the repository**
    ```bash
-   cd Crypto-trading-ap
+   git clone https://github.com/Jose-IDO/crypto-app-ui.git
+   cd crypto-app-ui
    ```
 
 2. **Install dependencies**
