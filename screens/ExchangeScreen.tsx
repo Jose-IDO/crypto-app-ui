@@ -12,25 +12,44 @@ import DropdownList from '../components/DropdownList';
 import FeeSummary from '../components/FeeSummary';
 import BuySuccessModal from '../components/BuySuccessModal';
 import SwapIconSvg from '../assets/icons/swap.svg';
-import { COIN_OPTIONS, FIAT_OPTIONS } from '../constants/assets';
+import { COIN_OPTIONS, FIAT_OPTIONS, AssetOption } from '../constants/assets';
 import { EXCHANGE_RATES, GAS_FEES } from '../constants/exchangeRates';
 import theme from '../styles/theme';
 
-const ExchangeScreen = ({ onOpenNotifications }) => {
-  const [fromCoin, setFromCoin] = useState(COIN_OPTIONS[0]);
-  const [toFiat, setToFiat] = useState(FIAT_OPTIONS[0]);
-  const [fromAmount, setFromAmount] = useState('0');
-  const [toAmount, setToAmount] = useState('0');
-  const [activeField, setActiveField] = useState('from');
-  const [fromError, setFromError] = useState('');
-  const [toError, setToError] = useState('');
-  const [showFromDropdown, setShowFromDropdown] = useState(false);
-  const [showToDropdown, setShowToDropdown] = useState(false);
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
+interface ExchangeScreenProps {
+  onOpenNotifications: () => void;
+  onBackPress: () => void;
+}
 
-  const getRate = () => {
-    const coinRates = EXCHANGE_RATES[fromCoin.id] || {};
-    return coinRates[toFiat.id] || 0;
+const ExchangeScreen: React.FC<ExchangeScreenProps> = ({ onOpenNotifications, onBackPress }) => {
+  const [fromCoin, setFromCoin] = useState<AssetOption>(COIN_OPTIONS[0]);
+  const [toFiat, setToFiat] = useState<AssetOption>(FIAT_OPTIONS[0]);
+  const [fromAmount, setFromAmount] = useState<string>('0');
+  const [toAmount, setToAmount] = useState<string>('0');
+  const [activeField, setActiveField] = useState<'from' | 'to'>('from');
+  const [fromError, setFromError] = useState<string>('');
+  const [toError, setToError] = useState<string>('');
+  const [showFromDropdown, setShowFromDropdown] = useState<boolean>(false);
+  const [showToDropdown, setShowToDropdown] = useState<boolean>(false);
+  const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false);
+
+  const isCrypto = (assetId: string): boolean => {
+    return assetId in EXCHANGE_RATES;
+  };
+
+  const getRate = (): number => {
+    const coinRates = EXCHANGE_RATES[fromCoin.id as keyof typeof EXCHANGE_RATES];
+    if (coinRates) {
+      return (coinRates as Record<string, number>)[toFiat.id] || 0;
+    }
+    
+    const fiatRates = EXCHANGE_RATES[toFiat.id as keyof typeof EXCHANGE_RATES];
+    if (fiatRates) {
+      const invertedRate = (fiatRates as Record<string, number>)[fromCoin.id];
+      return invertedRate ? 1 / invertedRate : 0;
+    }
+    
+    return 0;
   };
 
   useEffect(() => {
@@ -91,10 +110,13 @@ const ExchangeScreen = ({ onOpenNotifications }) => {
   const coinAmountNumber = Number(fromAmount.replace(',', '')) || 0;
   const fiatAmountNumber = Number(toAmount.replace(',', '')) || 0;
   
+  const cryptoAsset = isCrypto(fromCoin.id) ? fromCoin : toFiat;
+  const fiatAsset = isCrypto(fromCoin.id) ? toFiat : fromCoin;
+  
   const estimateFee = fiatAmountNumber * 0.01;
   const youWillReceive = fiatAmountNumber - estimateFee;
   const spreadPercent = 0.2;
-  const gasFee = GAS_FEES[fromCoin.id] || 0;
+  const gasFee = GAS_FEES[cryptoAsset.id as keyof typeof GAS_FEES] || 0;
 
   const notEnoughBalance = fiatAmountNumber > toFiat.balance;
 
@@ -106,10 +128,16 @@ const ExchangeScreen = ({ onOpenNotifications }) => {
     !notEnoughBalance;
 
   const handleSwap = () => {
-    const tempFrom = fromAmount;
-    const tempTo = toAmount;
-    setFromAmount(tempTo);
-    setToAmount(tempFrom);
+    const tempCoin = fromCoin;
+    const tempFiat = toFiat;
+    setFromCoin(tempFiat);
+    setToFiat(tempCoin);
+    
+    const tempFromAmount = fromAmount;
+    const tempToAmount = toAmount;
+    setFromAmount(tempToAmount);
+    setToAmount(tempFromAmount);
+    
     setActiveField('from');
   };
 
@@ -134,12 +162,12 @@ const ExchangeScreen = ({ onOpenNotifications }) => {
     setShowSuccessModal(false);
   };
 
-  const handleSelectFromCoin = (coin) => {
+  const handleSelectFromCoin = (coin: AssetOption) => {
     setFromCoin(coin);
     setShowFromDropdown(false);
   };
 
-  const handleSelectToFiat = (fiat) => {
+  const handleSelectToFiat = (fiat: AssetOption) => {
     setToFiat(fiat);
     setShowToDropdown(false);
   };
@@ -152,7 +180,7 @@ const ExchangeScreen = ({ onOpenNotifications }) => {
     >
       <Header
         title="Exchange"
-        onPressLeft={() => {}}
+        onPressLeft={onBackPress}
         onPressRight={onOpenNotifications}
         showRightIcon
       />
@@ -161,7 +189,7 @@ const ExchangeScreen = ({ onOpenNotifications }) => {
         <AssetCard
           asset={fromCoin}
           amount={fromAmount}
-          onAmountChange={(text) => {
+          onAmountChange={(text: string) => {
             setActiveField('from');
             setFromAmount(text);
           }}
@@ -170,13 +198,13 @@ const ExchangeScreen = ({ onOpenNotifications }) => {
             setShowToDropdown(false);
           }}
           balanceLabel="Balance"
-          balanceText={fromCoin.balance.toFixed(4)}
+          balanceText={isCrypto(fromCoin.id) ? fromCoin.balance.toFixed(4) : fromCoin.balance.toFixed(2)}
           error={fromError}
         />
 
         {showFromDropdown && (
           <DropdownList
-            options={COIN_OPTIONS}
+            options={isCrypto(fromCoin.id) ? COIN_OPTIONS : FIAT_OPTIONS}
             onSelect={handleSelectFromCoin}
           />
         )}
@@ -200,7 +228,7 @@ const ExchangeScreen = ({ onOpenNotifications }) => {
         <AssetCard
           asset={toFiat}
           amount={toAmount}
-          onAmountChange={(text) => {
+          onAmountChange={(text: string) => {
             setActiveField('to');
             setToAmount(text);
           }}
@@ -209,14 +237,14 @@ const ExchangeScreen = ({ onOpenNotifications }) => {
             setShowFromDropdown(false);
           }}
           balanceLabel="Balance"
-          balanceText={toFiat.balance.toFixed(2)}
+          balanceText={isCrypto(toFiat.id) ? toFiat.balance.toFixed(4) : toFiat.balance.toFixed(2)}
           error={toError}
           isBottom
         />
 
         {showToDropdown && (
           <DropdownList
-            options={FIAT_OPTIONS}
+            options={isCrypto(toFiat.id) ? COIN_OPTIONS : FIAT_OPTIONS}
             onSelect={handleSelectToFiat}
           />
         )}
@@ -234,7 +262,7 @@ const ExchangeScreen = ({ onOpenNotifications }) => {
           pressed && canBuy && styles.buyButtonPressed,
         ]}
       >
-        <Text style={styles.buyButtonText}>Buy {fromCoin.label}</Text>
+        <Text style={styles.buyButtonText}>Buy {cryptoAsset.label}</Text>
       </Pressable>
 
       <FeeSummary
@@ -242,14 +270,14 @@ const ExchangeScreen = ({ onOpenNotifications }) => {
         youWillReceive={youWillReceive}
         spreadPercent={spreadPercent}
         gasFee={gasFee}
-        coinLabel={fromCoin.label}
-        fiatLabel={toFiat.label}
+        coinLabel={cryptoAsset.label}
+        fiatLabel={fiatAsset.label}
       />
 
       <BuySuccessModal
         visible={showSuccessModal}
         onClose={closeSuccessModal}
-        assetLabel={fromCoin.label}
+        assetLabel={cryptoAsset.label}
       />
     </ScrollView>
   );

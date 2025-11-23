@@ -4,7 +4,14 @@ import BackIconSvg from '../assets/icons/back.svg';
 import BellIconSvg from '../assets/icons/bell.svg';
 import theme from '../styles/theme';
 
-const Header = ({ title, onPressLeft, onPressRight, showRightIcon = true }) => {
+interface HeaderProps {
+  title: string;
+  onPressLeft: () => void;
+  onPressRight?: () => void;
+  showRightIcon?: boolean;
+}
+
+const Header: React.FC<HeaderProps> = ({ title, onPressLeft, onPressRight, showRightIcon = true }) => {
   return (
     <View style={styles.header}>
       <Pressable
@@ -67,4 +74,5 @@ const styles = StyleSheet.create({
 });
 
 export default Header;
+
 

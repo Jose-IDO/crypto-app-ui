@@ -2,7 +2,16 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import theme from '../styles/theme';
 
-const FeeSummary = ({
+interface FeeSummaryProps {
+  estimateFee: number;
+  youWillReceive: number;
+  spreadPercent: number;
+  gasFee: number;
+  coinLabel: string;
+  fiatLabel: string;
+}
+
+const FeeSummary: React.FC<FeeSummaryProps> = ({
   estimateFee,
   youWillReceive,
   spreadPercent,
@@ -58,4 +67,5 @@ const styles = StyleSheet.create({
 });
 
 export default FeeSummary;
+
 

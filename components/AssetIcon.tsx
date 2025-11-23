@@ -1,7 +1,13 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
+import { SvgProps } from 'react-native-svg';
 
-const AssetIcon = ({ IconComponent, size = 28 }) => {
+interface AssetIconProps {
+  IconComponent?: React.ComponentType<SvgProps>;
+  size?: number;
+}
+
+const AssetIcon: React.FC<AssetIconProps> = ({ IconComponent, size = 28 }) => {
   if (!IconComponent) {
     return (
       <View style={[styles.container, { width: size, height: size, backgroundColor: '#3f3a52', borderRadius: size / 2 }]} />
@@ -23,4 +29,5 @@ const styles = StyleSheet.create({
 });
 
 export default AssetIcon;
+
 

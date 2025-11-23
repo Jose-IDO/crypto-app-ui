@@ -8,7 +8,13 @@ import {
 } from 'react-native';
 import theme from '../styles/theme';
 
-const BuySuccessModal = ({ visible, onClose, assetLabel }) => {
+interface BuySuccessModalProps {
+  visible: boolean;
+  onClose: () => void;
+  assetLabel: string;
+}
+
+const BuySuccessModal: React.FC<BuySuccessModalProps> = ({ visible, onClose, assetLabel }) => {
   return (
     <Modal
       visible={visible}
@@ -79,4 +85,5 @@ const styles = StyleSheet.create({
 });
 
 export default BuySuccessModal;
+
 

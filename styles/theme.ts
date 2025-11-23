@@ -1,4 +1,3 @@
-// styles/theme.js
 const theme = {
   colors: {
     background: '#12101f',
@@ -8,7 +7,8 @@ const theme = {
     placeholder: '#77748a',
     border: '#2b2738',
   },
-};
+} as const;
 
 export default theme;
+
 

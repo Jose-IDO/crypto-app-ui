@@ -1,7 +1,13 @@
 import React from 'react';
 import Svg, { Path } from 'react-native-svg';
 
-const DropdownIcon = ({ width = 12, height = 12, color = '#77748a' }) => (
+interface DropdownIconProps {
+  width?: number;
+  height?: number;
+  color?: string;
+}
+
+const DropdownIcon: React.FC<DropdownIconProps> = ({ width = 12, height = 12, color = '#77748a' }) => (
   <Svg width={width} height={height} viewBox="0 0 24 24" fill="none">
     <Path
       fillRule="evenodd"
@@ -13,4 +19,5 @@ const DropdownIcon = ({ width = 12, height = 12, color = '#77748a' }) => (
 );
 
 export default DropdownIcon;
+
 

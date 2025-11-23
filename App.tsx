@@ -1,15 +1,25 @@
-import React, { useState } from 'react';
-import { SafeAreaView, StatusBar, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { SafeAreaView, StatusBar, StyleSheet, BackHandler } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import ExchangeScreen from './screens/ExchangeScreen';
 import NotificationsScreen from './screens/NotificationsScreen';
 import theme from './styles/theme';
 
 export default function App() {
-  const [currentScreen, setCurrentScreen] = useState('exchange');
+  const [currentScreen, setCurrentScreen] = useState<'exchange' | 'notifications'>('exchange');
 
   const goToNotifications = () => setCurrentScreen('notifications');
   const goToExchange = () => setCurrentScreen('exchange');
+
+  const handleBackPress = () => {
+    BackHandler.exitApp();
+    return true;
+  };
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress);
+    return () => backHandler.remove();
+  }, []);
 
   return (
     <SafeAreaView style={styles.root}>
@@ -21,9 +31,9 @@ export default function App() {
         style={styles.gradient}
       >
         {currentScreen === 'exchange' ? (
-          <ExchangeScreen onOpenNotifications={goToNotifications} />
+          <ExchangeScreen onOpenNotifications={goToNotifications} onBackPress={handleBackPress} />
         ) : (
-          <NotificationsScreen onBack={goToExchange} />
+          <NotificationsScreen onBack={goToExchange} onBackPress={handleBackPress} />
         )}
       </LinearGradient>
     </SafeAreaView>
@@ -39,4 +49,5 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
+
 

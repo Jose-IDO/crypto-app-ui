@@ -6,9 +6,15 @@ import {
   Pressable,
 } from 'react-native';
 import AssetIcon from './AssetIcon';
+import { AssetOption } from '../constants/assets';
 import theme from '../styles/theme';
 
-const DropdownList = ({ options, onSelect }) => {
+interface DropdownListProps {
+  options: AssetOption[];
+  onSelect: (item: AssetOption) => void;
+}
+
+const DropdownList: React.FC<DropdownListProps> = ({ options, onSelect }) => {
   return (
     <View style={styles.dropdown}>
       {options.map((item) => (
@@ -54,4 +60,5 @@ const styles = StyleSheet.create({
 });
 
 export default DropdownList;
+
 

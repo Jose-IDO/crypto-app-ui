@@ -3,12 +3,17 @@ import { View, Text, StyleSheet } from 'react-native';
 import Header from '../components/Header';
 import theme from '../styles/theme';
 
-const NotificationsScreen = ({ onBack }) => {
+interface NotificationsScreenProps {
+  onBack: () => void;
+  onBackPress: () => void;
+}
+
+const NotificationsScreen: React.FC<NotificationsScreenProps> = ({ onBack, onBackPress }) => {
   return (
     <View style={styles.container}>
       <Header
         title="Notifications"
-        onPressLeft={onBack}
+        onPressLeft={onBackPress}
         showRightIcon={false}
       />
 
@@ -48,4 +53,5 @@ const styles = StyleSheet.create({
 });
 
 export default NotificationsScreen;
+
 

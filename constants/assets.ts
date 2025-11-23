@@ -5,12 +5,21 @@ import UsdIcon from '../assets/fiat/usd.svg';
 import EurIcon from '../assets/fiat/eur.svg';
 import GbpIcon from '../assets/fiat/gbp.svg';
 import { EXCHANGE_RATES } from './exchangeRates';
+import { SvgProps } from 'react-native-svg';
 
 const ETH_BALANCE = 293.0187;
 const BTC_BALANCE = 1.3456;
 const ADA_BALANCE = 12890.12;
 
-export const COIN_OPTIONS = [
+export interface AssetOption {
+  id: string;
+  label: string;
+  name: string;
+  icon: React.FC<SvgProps>;
+  balance: number;
+}
+
+export const COIN_OPTIONS: AssetOption[] = [
   {
     id: 'eth',
     label: 'ETH',
@@ -38,7 +47,7 @@ const USD_BALANCE = ETH_BALANCE * EXCHANGE_RATES.eth.usd;
 const EUR_BALANCE = ETH_BALANCE * EXCHANGE_RATES.eth.eur;
 const GBP_BALANCE = ETH_BALANCE * EXCHANGE_RATES.eth.gbp;
 
-export const FIAT_OPTIONS = [
+export const FIAT_OPTIONS: AssetOption[] = [
   {
     id: 'usd',
     label: 'USD',

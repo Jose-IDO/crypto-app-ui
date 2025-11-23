@@ -8,9 +8,21 @@ import {
 } from 'react-native';
 import AssetIcon from './AssetIcon';
 import DropdownIconSvg from '../assets/icons/dropdown.svg';
+import { AssetOption } from '../constants/assets';
 import theme from '../styles/theme';
 
-const AssetCard = ({
+interface AssetCardProps {
+  asset: AssetOption;
+  amount: string;
+  onAmountChange: (text: string) => void;
+  onPressAsset: () => void;
+  balanceLabel: string;
+  balanceText: string;
+  error?: string;
+  isBottom?: boolean;
+}
+
+const AssetCard: React.FC<AssetCardProps> = ({
   asset,
   amount,
   onAmountChange,
@@ -39,7 +51,17 @@ const AssetCard = ({
         <TextInput
           style={styles.amountInput}
           value={amount}
-          onChangeText={onAmountChange}
+          onChangeText={(text) => {
+            const numericText = text.replace(/[^0-9.]/g, '');
+            const parts = numericText.split('.');
+            if (parts.length > 2) {
+              return;
+            }
+            if (parts[1] && parts[1].length > 8) {
+              return;
+            }
+            onAmountChange(numericText);
+          }}
           keyboardType="numeric"
           placeholder="0.0"
           placeholderTextColor={theme.colors.placeholder}
@@ -118,4 +140,5 @@ const styles = StyleSheet.create({
 });
 
 export default AssetCard;
+
 
